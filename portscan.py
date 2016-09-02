@@ -2,16 +2,22 @@
 # portscan.py - a simple portscanner project to practice network programming
 # in python3
 
+import argparse
 import socket
 import time
 
-# get the IP address of the host to scan
-host = input("Enter the name of the host to scan: ")
-#host = 'vulnerable'
-hostIP = socket.gethostbyname(host)
+parser = argparse.ArgumentParser(description='scan for open TCP/IP ports')
+parser.add_argument('host', 
+                    help='name or IP of the host to scan')
+parser.add_argument('-r', '--range', nargs=2, type=int, 
+                    help='port range to scan: [start port] [end port]')
+args = parser.parse_args()
 
-# get the range of ports to scan
-port = 12
+host = args.host
+port_range = args.range
+
+# get the IP address of the host to scan
+hostIP = socket.gethostbyname(host)
 
 print('-' * 60)
 print('Please wait, scanning {} at {}'.format(host, hostIP).center(60))
@@ -20,7 +26,7 @@ print('-' * 60, '\n')
 # get the starting time
 start_time = time.monotonic()
 
-for p in range(1, 1025):
+for p in range(port_range[0], port_range[1] + 1):
     # create the socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    
     # try to connect the socket at specified port    
